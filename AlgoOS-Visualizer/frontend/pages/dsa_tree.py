@@ -691,49 +691,20 @@ def heap_page():
             success, stdout, stderr = run_dsa_heap(st.session_state.heap_type, st.session_state.heap_commands)
             
             if success:
+                # Parse using new format parser
+                heap_states = parse_heap_output(stdout)
+                
                 # Check for sorted result in output
                 sorted_result = None
-                if 'SORTED=[' in stdout:
-                    match = re.search(r'SORTED=\[([^\]]*)\]', stdout)
-                    if match:
-                        sorted_result = match.group(1)
+                for state in heap_states:
+                    if 'HEAPSORT_COMPLETE' in state['operation']:
+                        match = re.search(r'SORTED=\[([^\]]*)\]', state['meta'])
+                        if match:
+                            sorted_result = match.group(1)
                 
                 # Display sorted result prominently if heap sort was performed
                 if sorted_result:
                     st.success(f"**🎯 Heap Sort Result:** `{sorted_result}`")
-                
-                # Extract all heap states for step-by-step visualization
-                lines = stdout.split('\n')
-                heap_states = []
-                current_heap = []
-                current_op = "INIT"
-                sorted_so_far = []
-                
-                for line in lines:
-                    line = line.strip()
-                    if line.startswith('ARRAY:'):
-                        parts = line.replace('ARRAY:', '').strip().split()
-                        current_heap = [int(x) for x in parts if x.lstrip('-').isdigit()]
-                        heap_states.append({
-                            'heap': current_heap.copy(),
-                            'operation': current_op,
-                            'sorted': sorted_so_far.copy()
-                        })
-                    elif line.startswith('BUILD_HEAP:'):
-                        current_op = "BUILD HEAP"
-                    elif line.startswith('HEAPIFY:'):
-                        current_op = line.replace('HEAPIFY:', '').strip()
-                    elif line.startswith('SWAP:'):
-                        current_op = line
-                    elif line.startswith('INSERT:'):
-                        current_op = line
-                    elif line.startswith('EXTRACT:'):
-                        current_op = line
-                    elif line.startswith('SORTED_SO_FAR:'):
-                        parts = line.replace('SORTED_SO_FAR:', '').strip().split()
-                        sorted_so_far = [int(x) for x in parts if x.lstrip('-').isdigit()]
-                    elif line.startswith('HEAP_SORT:'):
-                        current_op = "HEAP SORT - Starting"
                 
                 if heap_states:
                     # Animation slider (only show if more than 1 step)
@@ -744,10 +715,7 @@ def heap_page():
                     current_state = heap_states[step - 1]
                     
                     # Show current operation
-                    st.markdown(f"**Operation:** `{current_state['operation']}`")
-                    
-                    # Show sorted elements so far during heap sort
-                    if current_state['sorted']:
+                    st.markdown(f"**Step {step}/{len(heap_states)}:** `{current_state['operation']}`")
                         st.info(f"**Sorted so far:** `{current_state['sorted']}`")
                     
                     # Draw heap tree
@@ -756,16 +724,6 @@ def heap_page():
                         st.markdown(f"**Array:** `{current_state['heap']}`")
                     else:
                         st.info("Heap is empty")
-                else:
-                    # Fallback - just show last heap state
-                    for line in reversed(lines):
-                        if line.startswith('ARRAY:'):
-                            parts = line.replace('ARRAY:', '').strip().split()
-                            current_heap = [int(x) for x in parts if x.lstrip('-').isdigit()]
-                            break
-                    
-                    if current_heap:
-                        draw_heap_tree(current_heap, st.session_state.heap_type == "MAX")
                 
                 with st.expander("View Output"):
                     st.code(stdout, language="text")
