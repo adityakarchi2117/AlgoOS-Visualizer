@@ -1,0 +1,391 @@
+/* File: frontend/assets/styles.css */
+
+/* Main container styles */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styles */
+.header {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    color: white;
+    margin: 0;
+}
+
+/* Card styles */
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Stack visualization */
+.stack-container {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    min-height: 300px;
+    border: 2px solid #333;
+    border-top: none;
+    padding: 10px;
+    background: #f8f9fa;
+}
+
+.stack-element {
+    width: 80px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+    border-radius: 5px;
+    font-weight: bold;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Queue visualization */
+.queue-container {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    border: 2px solid #333;
+    padding: 10px;
+    background: #f8f9fa;
+    overflow-x: auto;
+}
+
+.queue-element {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Linked list visualization */
+.linked-list-container {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.ll-node {
+    display: flex;
+    align-items: center;
+}
+
+.ll-node-box {
+    width: 60px;
+    height: 40px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.ll-arrow {
+    width: 30px;
+    height: 2px;
+    background: #333;
+    position: relative;
+}
+
+.ll-arrow::after {
+    content: '→';
+    position: absolute;
+    right: -5px;
+    top: -10px;
+    font-size: 20px;
+}
+
+/* Tree visualization */
+.tree-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.tree-node {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: #333;
+    border-radius: 50%;
+    line-height: 40px;
+    text-align: center;
+    font-weight: bold;
+    margin: 5px;
+}
+
+/* Gantt chart styles */
+.gantt-container {
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.gantt-bar {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    border-radius: 3px;
+    margin: 2px 0;
+}
+
+.gantt-idle {
+    background: #6c757d;
+}
+
+.gantt-process {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Page frames visualization */
+.frames-container {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+}
+
+.frame {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: white;
+}
+
+.frame-filled {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.frame-fault {
+    border-color: #dc3545;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Disk scheduling visualization */
+.disk-container {
+    padding: 20px;
+}
+
+.disk-track {
+    height: 40px;
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    border-radius: 5px;
+    position: relative;
+    margin: 20px 0;
+}
+
+.disk-head {
+    width: 4px;
+    height: 50px;
+    background: #dc3545;
+    position: absolute;
+    top: -5px;
+    transition: left 0.5s ease-in-out;
+}
+
+/* Statistics card */
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.stats-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.stats-label {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Animation classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Button styles */
+.custom-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.custom-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Code output styles */
+.code-output {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+/* Table styles */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.results-table th,
+.results-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.results-table th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.results-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Banker's algorithm matrix */
+.matrix-container {
+    overflow-x: auto;
+}
+
+.matrix-table {
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.matrix-table td,
+.matrix-table th {
+    border: 1px solid #333;
+    padding: 8px 12px;
+    text-align: center;
+    min-width: 40px;
+}
+
+.matrix-table th {
+    background: #333;
+    color: white;
+}
+
+.safe-state {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.unsafe-state {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .stack-element,
+    .queue-element {
+        width: 50px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .ll-node-box {
+        width: 40px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .frame {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+}
