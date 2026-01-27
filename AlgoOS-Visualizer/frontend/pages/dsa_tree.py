@@ -716,7 +716,6 @@ def heap_page():
                     
                     # Show current operation
                     st.markdown(f"**Step {step}/{len(heap_states)}:** `{current_state['operation']}`")
-                        st.info(f"**Sorted so far:** `{current_state['sorted']}`")
                     
                     # Draw heap tree
                     if current_state['heap']:
