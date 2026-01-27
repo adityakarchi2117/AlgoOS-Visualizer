@@ -13,23 +13,31 @@ struct Node {
 int step = 0;
 Node* root = nullptr;
 
+void collectNodes(Node* node, string& result) {
+    if (!node) return;
+    
+    // Add current node
+    if (!result.empty()) result += ",";
+    result += to_string(node->data) + "(";
+    result += node->left ? to_string(node->left->data) : "_";
+    result += ",";
+    result += node->right ? to_string(node->right->data) : "_";
+    result += ")";
+    
+    // Recursively add children
+    collectNodes(node->left, result);
+    collectNodes(node->right, result);
+}
+
 string treeToString(Node* node) {
-    if (!node) return "";
+    if (!node) return "EMPTY";
     string result;
-    if (node->left || node->right) {
-        result = to_string(node->data) + "(";
-        result += node->left ? treeToString(node->left) : "_";
-        result += ",";
-        result += node->right ? treeToString(node->right) : "_";
-        result += ")";
-    } else {
-        result = to_string(node->data);
-    }
+    collectNodes(node, result);
     return result;
 }
 
 void printState(const string& operation, const string& meta = "") {
-    string tree = root ? treeToString(root) : "EMPTY";
+    string tree = treeToString(root);
     cout << step++ << " | " << operation << " | 101 | TREE:" << tree;
     if (!meta.empty()) {
         cout << " | " << meta;
