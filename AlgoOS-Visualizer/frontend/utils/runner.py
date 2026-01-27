@@ -18,6 +18,39 @@ def get_build_path() -> Path:
     return current_dir / "build"
 
 
+def get_source_path(category: str, name: str) -> Path:
+    """Get the path to a C++ source file."""
+    current_dir = Path(__file__).parent.parent.parent
+    backend = current_dir / "backend" / category / name
+    return backend.with_suffix(".cpp") if backend.suffix != ".cpp" else backend
+
+
+def compile_if_needed(name: str, source_path: Path) -> bool:
+    """Compile C++ source if executable doesn't exist."""
+    exe_path = get_executable_path(name)
+    
+    # Skip if already compiled
+    if exe_path.exists():
+        return True
+    
+    # Create build directory if needed
+    build_path = get_build_path()
+    build_path.mkdir(parents=True, exist_ok=True)
+    
+    # Compile the source
+    try:
+        compile_cmd = ["g++", "-std=gnu++17", "-o", str(exe_path), str(source_path)]
+        result = subprocess.run(
+            compile_cmd,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
+
+
 def get_executable_path(name: str) -> Path:
     """Get the full path to an executable."""
     build_path = get_build_path()
@@ -29,7 +62,8 @@ def get_executable_path(name: str) -> Path:
 def run_executable(
     executable_name: str,
     input_data: str,
-    timeout: int = 30
+    timeout: int = 30,
+    source_path: Optional[Path] = None
 ) -> Tuple[bool, str, str]:
     """
     Run a C++ executable with the given input.
@@ -38,11 +72,17 @@ def run_executable(
         executable_name: Name of the executable (without extension)
         input_data: Input string to pass to stdin
         timeout: Maximum execution time in seconds
+        source_path: Path to source file (for auto-compilation)
     
     Returns:
         Tuple of (success, stdout, stderr)
     """
     exe_path = get_executable_path(executable_name)
+    
+    # Auto-compile if needed
+    if not exe_path.exists() and source_path:
+        if not compile_if_needed(executable_name, source_path):
+            return False, "", f"Failed to compile: {source_path}"
     
     if not exe_path.exists():
         return False, "", f"Executable not found: {exe_path}"
@@ -293,37 +333,43 @@ def parse_bankers_output(output: str) -> Dict[str, Any]:
 def run_dsa_stack(commands: List[str]) -> Tuple[bool, str, str]:
     """Run stack operations."""
     input_data = "\n".join(commands) + "\nEND\n"
-    return run_executable("stack", input_data)
+    src = get_source_path("dsa/stack", "stack.cpp")
+    return run_executable("stack", input_data, source_path=src)
 
 
 def run_dsa_queue(queue_type: str, size: int, commands: List[str]) -> Tuple[bool, str, str]:
     """Run queue operations."""
     input_data = f"{queue_type} {size}\n" + "\n".join(commands) + "\nEND\n"
-    return run_executable("queue", input_data)
+    src = get_source_path("dsa/queue", "queue.cpp")
+    return run_executable("queue", input_data, source_path=src)
 
 
 def run_dsa_linkedlist(commands: List[str]) -> Tuple[bool, str, str]:
     """Run linked list operations."""
     input_data = "\n".join(commands) + "\nEND\n"
-    return run_executable("ll", input_data)
+    src = get_source_path("dsa/linked-list", "ll.cpp")
+    return run_executable("ll", input_data, source_path=src)
 
 
 def run_dsa_bst(commands: List[str]) -> Tuple[bool, str, str]:
     """Run BST operations."""
     input_data = "\n".join(commands) + "\nEND\n"
-    return run_executable("binary_tree", input_data)
+    src = get_source_path("dsa/trees", "bst.cpp")
+    return run_executable("binary_tree", input_data, source_path=src)
 
 
 def run_dsa_avl(commands: List[str]) -> Tuple[bool, str, str]:
     """Run AVL tree operations."""
     input_data = "\n".join(commands) + "\nEND\n"
-    return run_executable("avl", input_data)
+    src = get_source_path("dsa/trees", "avl.cpp")
+    return run_executable("avl", input_data, source_path=src)
 
 
 def run_dsa_heap(heap_type: str, commands: List[str]) -> Tuple[bool, str, str]:
     """Run heap operations."""
     input_data = f"{heap_type}\n" + "\n".join(commands) + "\nEND\n"
-    return run_executable("heap", input_data)
+    src = get_source_path("dsa/heap", "heap.cpp")
+    return run_executable("heap", input_data, source_path=src)
 
 
 def run_dsa_dijkstra(
@@ -341,13 +387,15 @@ def run_dsa_dijkstra(
     lines.append(str(source))
     
     input_data = "\n".join(lines) + "\n"
-    return run_executable("dijkstra", input_data)
+    src = get_source_path("dsa/graphs", "dijkstra.cpp")
+    return run_executable("dijkstra", input_data, source_path=src)
 
 
 def run_dsa_huffman(text: str) -> Tuple[bool, str, str]:
     """Run Huffman coding."""
     input_data = f"TEXT {text}\nENCODE\nEND\n"
-    return run_executable("huffman", input_data)
+    src = get_source_path("dsa/huffman", "huffman.cpp")
+    return run_executable("huffman", input_data, source_path=src)
 
 
 def run_os_fcfs(processes: List[Tuple[int, int]]) -> Tuple[bool, str, str]:
@@ -362,7 +410,8 @@ def run_os_fcfs(processes: List[Tuple[int, int]]) -> Tuple[bool, str, str]:
         lines.append(f"{arrival} {burst}")
     
     input_data = "\n".join(lines) + "\n"
-    return run_executable("fcfs", input_data)
+    src = get_source_path("os/cpu", "fcfs.cpp")
+    return run_executable("fcfs", input_data, source_path=src)
 
 
 def run_os_sjf(
@@ -382,7 +431,8 @@ def run_os_sjf(
         lines.append(f"{arrival} {burst}")
     
     input_data = "\n".join(lines) + "\n"
-    return run_executable("sjf", input_data)
+    src = get_source_path("os/cpu", "sjf.cpp")
+    return run_executable("sjf", input_data, source_path=src)
 
 
 def run_os_round_robin(
@@ -401,7 +451,8 @@ def run_os_round_robin(
         lines.append(f"{arrival} {burst}")
     
     input_data = "\n".join(lines) + "\n"
-    return run_executable("round_robin", input_data)
+    src = get_source_path("os/cpu", "round_robin.cpp")
+    return run_executable("round_robin", input_data, source_path=src)
 
 
 def run_os_priority(
@@ -421,7 +472,8 @@ def run_os_priority(
         lines.append(f"{arrival} {burst} {priority}")
     
     input_data = "\n".join(lines) + "\n"
-    return run_executable("priority", input_data)
+    src = get_source_path("os/cpu", "priority.cpp")
+    return run_executable("priority", input_data, source_path=src)
 
 
 # ============== HIGH-LEVEL OS RUNNER FUNCTIONS ==============
@@ -473,7 +525,8 @@ def run_os_page_replacement(algorithm: str, num_frames: int, pages: List[int]) -
     lines = [str(num_frames)] + [str(p) for p in pages]
     input_data = "\n".join(lines) + "\n"
     
-    success, stdout, stderr = run_executable(algorithm, input_data)
+    src = get_source_path(f"os/memory", f"{algorithm}.cpp")
+    success, stdout, stderr = run_executable(algorithm, input_data, source_path=src)
     
     if not success:
         return {"error": stderr or "Execution failed"}
@@ -508,7 +561,8 @@ def run_os_disk_scheduling(algorithm: str, head: int, max_cylinder: int, directi
     lines.extend([str(r) for r in requests])
     input_data = "\n".join(lines) + "\n"
     
-    success, stdout, stderr = run_executable("scan", input_data)
+    src = get_source_path("os/disk", "scan.cpp")
+    success, stdout, stderr = run_executable("scan", input_data, source_path=src)
     
     if not success:
         return {"error": stderr or "Execution failed"}
@@ -545,7 +599,8 @@ def run_os_bankers(num_processes: int, num_resources: int, allocation: List[List
     
     input_data = "\n".join(lines) + "\n"
     
-    success, stdout, stderr = run_executable("bankers", input_data)
+    src = get_source_path("os/deadlock", "bankers.cpp")
+    success, stdout, stderr = run_executable("bankers", input_data, source_path=src)
     
     if not success:
         return {"error": stderr or "Execution failed"}
